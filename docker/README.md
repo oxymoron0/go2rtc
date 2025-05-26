@@ -7,6 +7,13 @@
 - `alexxit/go2rtc:master-hardware` - latest unstable version based on `debian 13` (`amd64`)
 - `alexxit/go2rtc:master-rockchip` - latest unstable version based on `debian 12` (`arm64`)
 
+
+## Docker build
+```bash
+cd ~/go2rtc
+docker build --no-cache -t alexxit/go2rtc -f ./docker/Dockerfile .
+```
+
 ## Docker compose
 
 ```yaml
