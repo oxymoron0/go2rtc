@@ -1,0 +1,21 @@
+# docker compose -f ./docker/docker-compose.yaml --project-directory . up -d
+version: '3.8'
+services:
+  go2rtc:
+    container_name: go2rtc
+    image: ghcr.io/alexxit/go2rtc:latest
+    restart: unless-stopped
+    ports:
+      - "1984:1984" # Web UI
+      - "8554:8554" # RTSP
+      - "8555:8555/udp" # RTP/RTCP
+    volumes:
+      - .:/config/
+    # NVIDIA GPU 사용을 위한 설정
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all # 또는 특정 GPU 개수: 1
+              capabilities: [gpu]
