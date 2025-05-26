@@ -29,6 +29,12 @@ RUN --mount=type=cache,target=/root/.cache/go-build CGO_ENABLED=0 go build -ldfl
 # 2. Final image
 FROM python:${PYTHON_VERSION}-alpine AS base
 
+COPY --from=build /build/go2rtc /usr/local/bin/
+
+# Create a non-root user for security best practice
+RUN addgroup -S go2rtc && adduser -S go2rtc -G go2rtc -h /config
+RUN chown go2rtc:go2rtc /config
+
 # Install ffmpeg, tini (for signal handling),
 # and other common tools for the echo source.
 # alsa-plugins-pulse for ALSA support (+0MB)
@@ -51,4 +57,5 @@ ENTRYPOINT ["/sbin/tini", "--"]
 VOLUME /config
 WORKDIR /config
 
+USER go2rtc
 CMD ["go2rtc", "-config", "/config/go2rtc.yaml"]
