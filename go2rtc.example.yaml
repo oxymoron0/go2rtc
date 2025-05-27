@@ -1,0 +1,121 @@
+# Configuration adapted from https://github.com/AlexxIT/go2rtc/issues/894
+# Many thanks to @troykelly for the insightful insights.
+
+api:
+  origin: '*'
+ffmpeg:
+  cudah264video: -map 0:v:0? -c:v:0 h264_nvenc -g 50 -bf 0 -profile:v:0 high -level:v:0
+    auto -preset:v:0 p2 -tune:v:1 ull
+  cudahevcvideo: -map 0:v:0? -c:v:0 hevc_nvenc -g 50 -no-scenecut 1 -bf 0 -profile:v:0
+    main -level:v:0 auto -preset:v:0 p2 -tune:v:0 ull -tag:v:0 hvc1
+  cudartspinput: -hwaccel cuda -hwaccel_output_format cuda -fflags nobuffer -flags
+    low_delay -timeout 5000000 -rtsp_flags prefer_tcp -i {input}
+  h264/rk: -c:v h264_rkmpp_encoder -g 50 -bf 0
+  h265/rk: -c:v hevc_rkmpp_encoder -g 50 -bf 0
+  hevcboxcaminput: -hwaccel cuda -hwaccel_output_format cuda -r 20 -rtsp_transport
+    tcp -i {input}
+  hevccamout: -c:v hevc_nvenc
+  hevcinput: -loglevel info -hwaccel cuda -hwaccel_output_format cuda -rtsp_transport
+    tcp -i {input}
+  hevcoutput: -map_metadata -1 -c:v hevc_nvenc -g 50 -profile:v main -level:v auto
+    -preset:v p2 -tune:v ull -multipass disabled -movflags +faststart -zerolatency
+    1 -tag:v hvc1
+  hlshevcoutput: -map_metadata -1 -c:v hevc_nvenc -g 50 -profile:v main -level:v auto
+    -preset:v p2 -tune:v ull -multipass disabled -movflags +faststart -zerolatency
+    1 -tag:v hvc1
+  hlsrealtime: -hwaccel cuda -hwaccel_output_format cuda -extra_hw_frames 2 -fflags
+    nobuffer -flags low_delay -rtbufsize 1M -fflags +igndts -fflags +nofillin -fflags
+    +genpts -avoid_negative_ts +make_zero -re -i {input}
+
+hass:
+  config: /config
+
+log:
+  api: info
+  exec: info
+  format: text
+  level: info
+  ngrok: info
+  rtsp: info
+  streams: info
+  webrtc: info
+
+rtsp:
+  default_query: mp4
+
+streams:
+  abc:
+  - ffmpeg:https://[URL_TO_ABC_NEWS24]#audio=opus#audio=aac#input=hlsrealtime#video=cudahevcvideo
+  abch264:
+  - ffmpeg:abc#audio=opus#audio=aac#video=h264#hardware
+  birdseye: exec:ffmpeg -hide_banner -f rawvideo -pix_fmt yuv420p -video_size 1920x1080
+    -r 10 -i /tmp/cache/birdseye -c:v h264_nvenc -g 50 -profile:v high -level:v auto
+    -preset:v p2 -tune:v ll -rtsp_transport tcp -f rtsp {output}
+  building_basement:
+  - ffmpeg:rtsp://[REDATED_USER]:[REDACTED_PASS]@nvr001.building.example.invalid/unicast/c4/s0/live#video=copy
+  building_ground:
+  - ffmpeg:rtsp://[REDATED_USER]:[REDACTED_PASS]@nvr001.building.example.invalid/unicast/c2/s0/live#video=copy
+  building_intercom:
+  - ffmpeg:rtsp://[REDATED_USER]:[REDACTED_PASS]@front.intercom.example.invalid#audio=opus#audio=aac#input=cudartspinput#video=cudahevcvideo#raw=-vf
+    hwdownload,format=nv12,drawtext=text='%{localtime}':x=2:y=20:fontsize=28:fontcolor=white:box=1:boxcolor=black:boxborderw=2:fontfile='/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf',hwupload
+  building_intercomh264:
+  - ffmpeg:building_intercom#audio=opus#audio=aac#video=h264#hardware
+  building_level_1:
+  - ffmpeg:rtsp://[REDATED_USER]:[REDACTED_PASS]@nvr001.building.example.invalid/unicast/c1/s0/live#video=copy
+  building_street:
+  - ffmpeg:rtsp://[REDATED_USER]:[REDACTED_PASS]@nvr001.building.example.invalid/unicast/c3/s0/live#video=copy
+  cnn:
+  - ffmpeg:https://[URL_TO_SOURCE_M3U8]#audio=opus#audio=aac#input=hlsrealtime#video=cudahevcvideo
+  cnnh264:
+  - ffmpeg:cnn#audio=opus#audio=aac#video=h264#hardware
+  foyer:
+  - ffmpeg:rtsp://[REDATED_USER]:[REDACTED_PASS]@foyer.security.example.invalid#input=cudartspinput#video=cudahevcvideo#audio=opus#audio=aac
+  l2stairs:
+  - ffmpeg:rtsp://[REDATED_USER]:[REDACTED_PASS]@l2stairs.security.example.invalid#input=cudartspinput#video=cudahevcvideo#audio=opus#audio=aac
+  livingptz:
+  - ffmpeg:rtsp://[REDATED_USER]:[REDACTED_PASS]@livingptz.security.example.invalid:80/videoMain#input=cudartspinput#video=cudahevcvideo#audio=opus#audio=aac
+  masterbed:
+  - ffmpeg:rtsp://[REDATED_USER]:[REDACTED_PASS]@masterbed.security.example.invalid/#video=copy#audio=opus#audio=aac
+  officedesks:
+  - ffmpeg:rtsp://[REDATED_USER]:[REDACTED_PASS]@officedesks.security.example.invalid/0#video=copy
+  officeentry:
+  - ffmpeg:rtsp://[REDATED_USER]:[REDACTED_PASS]@officeentry.security.example.invalid/0#video=copy
+  storesptz:
+  - ffmpeg:rtsp://[REDATED_USER]:[REDACTED_PASS]@storesptz.security.example.invalid:80/videoMain#input=cudartspinput#video=cudahevcvideo#audio=opus#audio=aac
+  webcam_antsoutworld:
+  - ffmpeg:rtsp://[REDATED_USER]:[REDACTED_PASS]@cam003.security.example.invalid/live/main#video=copy
+  webcam_antsoutworldh264:
+  - ffmpeg:webcam_antsoutworld#video=h264#hardware
+  webcam_iss:
+  - echo:yt-dlp --print "ffmpeg:%(urls)s#input=hlsrealtime#video=cudahevcvideo#audio=opus#hardware"
+    https://www.youtube.com/watch?v=jPTD2gnZFUw
+  webcam_iss2:
+  - echo:yt-dlp --print "ffmpeg:%(urls)s#input=hlsrealtime#video=cudahevcvideo#audio=opus#hardware"
+    https://www.youtube.com/watch?v=P9C25Un7xaM
+  webcam_iss2h264:
+  - ffmpeg:webcam_iss2#audio=opus#audio=aac#video=h264#hardware
+  webcam_issh264:
+  - ffmpeg:webcam_iss#audio=opus#audio=aac#video=h264#hardware
+  webcam_sydney:
+  - ffmpeg:rtsp://[REDATED_USER]:[REDACTED_PASS]@cam005.security.example.invalid/h264_stream#video=copy
+  webcam_sydney2:
+  - ffmpeg:rtsp://[REDATED_USER]:[REDACTED_PASS]@cam004.security.example.invalid/live/main#video=copy
+  webcam_sydney2h264:
+  - ffmpeg:webcam_sydney2#video=h264#hardware
+  webcam_sydney3:
+  - echo:yt-dlp --print "ffmpeg:%(urls)s#input=hlsrealtime#video=cudahevcvideo#audio=opus#hardware"
+    https://www.youtube.com/watch?v=KPrrWB1eo1I
+  webcam_sydney3h264:
+  - ffmpeg:webcam_sydney3#audio=opus#audio=aac#video=h264#hardware
+  webcam_sydney4:
+  - echo:yt-dlp --print "ffmpeg:%(urls)s#input=hlsrealtime#video=cudahevcvideo#audio=opus#hardware"
+    https://www.youtube.com/watch?v=sWWCy2WCjRA
+  webcam_sydney4h264:
+  - ffmpeg:webcam_sydney4#audio=opus#audio=aac#video=h264#hardware
+  webcam_sydneyh264:
+  - ffmpeg:webcam_sydney#video=h264#hardware
+
+webrtc:
+  candidates:
+  - stun:8555
+  listen: :8555
