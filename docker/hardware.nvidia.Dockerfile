@@ -92,10 +92,11 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean \
 # libasound2-plugins for ALSA support
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked --mount=type=cache,target=/var/lib/apt,sharing=locked \
     echo 'deb http://deb.debian.org/debian trixie non-free' > /etc/apt/sources.list.d/debian-non-free.list && \
-    apt-get -y update && apt-get -y install ffmpeg tini \
+    # apt-get -y update && apt-get -y install ffmpeg tini \
+    apt-get -y update && apt-get -y install tini \
         python3 curl jq \
-        intel-media-va-driver-non-free \
-        mesa-va-drivers \
+        # intel-media-va-driver-non-free \
+        # mesa-va-drivers \
         libasound2-plugins && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
