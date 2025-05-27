@@ -4,6 +4,7 @@
 api:
   origin: '*'
 ffmpeg:
+  leorca_cudahevcvideo: -c:v hevc_nvenc -g 30 -bf 0 -profile:v main -b:v 5M -level:v auto -bufsize 5M -tune:v ll -preset:v p2
   cudah264video: -map 0:v:0? -c:v:0 h264_nvenc -g 50 -bf 0 -profile:v:0 high -level:v:0
     auto -preset:v:0 p2 -tune:v:1 ull
   cudahevcvideo: -map 0:v:0? -c:v:0 hevc_nvenc -g 50 -no-scenecut 1 -bf 0 -profile:v:0
