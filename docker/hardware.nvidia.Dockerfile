@@ -39,6 +39,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt install -y \
     build-essential \
     git \
+    nasm \
     yasm \
     cmake \
     libass-dev \
