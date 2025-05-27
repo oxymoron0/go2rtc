@@ -3,7 +3,8 @@ version: '3.8'
 services:
   go2rtc:
     container_name: go2rtc
-    image: ghcr.io/alexxit/go2rtc:latest
+    # image: ghcr.io/alexxit/go2rtc:master-hardware
+    image: alexxit/go2rtc:nvidia-ffmpeg
     restart: unless-stopped
     ports:
       - "1984:1984" # Web UI
