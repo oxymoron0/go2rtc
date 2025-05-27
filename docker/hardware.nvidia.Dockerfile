@@ -24,8 +24,17 @@ RUN --mount=type=cache,target=/root/.cache/go-build go mod download
 COPY . .
 RUN --mount=type=cache,target=/root/.cache/go-build CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath
 
+#--------------------------------
+# 2. FFmpeg Builder
+# docker run -it --rm --name ffmpeg-nvidia-container-build nvidia/cuda:12.9.0-cudnn-devel-ubuntu24.04 bash 로 아래 build-context 테스트
+ARG CUDA_VERSION="12.9.0"
+ARG UBUNTU_VERSION="24.04"
+FROM nvidia/cuda:${CUDA_VERSION}-cudnn-devel-ubuntu${UBUNTU_VERSION} AS ffmpeg-builder
 
-# 2. Final image
+
+
+#--------------------------------
+# 3. Final image
 ARG DEBIAN_VERSION="bookworm"
 FROM debian:${DEBIAN_VERSION}
 
