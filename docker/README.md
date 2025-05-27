@@ -8,10 +8,17 @@
 - `alexxit/go2rtc:master-rockchip` - latest unstable version based on `debian 12` (`arm64`)
 
 
-## Docker build
+## Build docker image
 ```bash
 cd ~/go2rtc
 docker build --no-cache -t alexxit/go2rtc -f ./docker/Dockerfile .
+```
+
+
+## Build docker nvidia-ffmpeg image 
+```bash
+cd ~/go2rtc
+docker build --no-cache -t alexxit/go2rtc:nvidia-ffmpeg -f ./docker/hardware.nvidia.Dockerfile .
 ```
 
 ## Docker compose
