@@ -3,11 +3,10 @@
 # 0. Prepare images
 # only debian 13 (trixie) has latest ffmpeg
 # https://packages.debian.org/trixie/ffmpeg
-ARG DEBIAN_VERSION="trixie-slim"
-ARG GO_VERSION="1.24-bookworm"
 
 
 # 1. Build go2rtc binary
+ARG GO_VERSION="1.24-bookworm"
 FROM --platform=$BUILDPLATFORM golang:${GO_VERSION} AS build
 ARG TARGETPLATFORM
 ARG TARGETOS
@@ -27,6 +26,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build CGO_ENABLED=0 go build -ldfl
 
 
 # 2. Final image
+ARG DEBIAN_VERSION="bookworm"
 FROM debian:${DEBIAN_VERSION}
 
 # Prepare apt for buildkit cache
