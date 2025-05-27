@@ -15,7 +15,8 @@ docker build --no-cache -t alexxit/go2rtc -f ./docker/Dockerfile .
 ```
 
 
-## Build docker nvidia-ffmpeg image 
+## Build docker nvidia-ffmpeg image
+> The host system must have an NVIDIA driver version 570.0 or newer installed.<br>This version is the minimum required to support NVENC API version 13.0, which was used during the FFmpeg build.<br>Use the nvidia-smi command to check the driver version."
 ```bash
 cd ~/go2rtc
 docker build --no-cache -t alexxit/go2rtc:nvidia-ffmpeg -f ./docker/hardware.nvidia.Dockerfile .
