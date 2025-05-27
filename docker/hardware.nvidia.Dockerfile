@@ -55,6 +55,26 @@ RUN git clone https://github.com/FFmpeg/nv-codec-headers.git /usr/src/nv-codec-h
     cd /usr/src/nv-codec-headers && \
     make install
 
+# Build Configure 
+RUN git clone https://git.ffmpeg.org/ffmpeg.git /usr/src/ffmpeg && \
+    cd /usr/src/ffmpeg && \
+    ./configure \
+    --prefix="/usr/local/ffmpeg_cuda" \
+    --enable-shared \
+    --enable-gpl \
+    --enable-libx264 \
+    --enable-libx265 \
+    --enable-nvenc \
+    --enable-nvdec \
+    --enable-cuda-nvcc \
+    --enable-cuvid \
+    --enable-nonfree \
+    --extra-cflags="-I/usr/local/cuda/include -I/usr/local/include/ffnvcodec" \
+    --extra-ldflags="-L/usr/local/cuda/lib64" \
+    --disable-static && \
+    make -j$(nproc) && \
+    make install
+
 
 #--------------------------------
 # 3. Final image
