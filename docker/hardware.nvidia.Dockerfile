@@ -3,10 +3,12 @@
 # 0. Prepare images
 # only debian 13 (trixie) has latest ffmpeg
 # https://packages.debian.org/trixie/ffmpeg
-
+ARG GO_VERSION="1.24-bookworm"
+ARG CUDA_VERSION="12.9.0"
+ARG UBUNTU_VERSION="24.04"
+ARG DEBIAN_VERSION="bookworm"
 
 # 1. Build go2rtc binary
-ARG GO_VERSION="1.24-bookworm"
 FROM --platform=$BUILDPLATFORM golang:${GO_VERSION} AS build
 ENV TZ=Asia/Seoul
 ENV DEBIAN_FRONTEND=noninteractive
@@ -30,8 +32,6 @@ RUN --mount=type=cache,target=/root/.cache/go-build CGO_ENABLED=0 go build -ldfl
 #--------------------------------
 # 2. FFmpeg Builder
 # docker run -it --rm --name ffmpeg-nvidia-container-build nvidia/cuda:12.9.0-cudnn-devel-ubuntu24.04 bash 로 아래 build-context 테스트
-ARG CUDA_VERSION="12.9.0"
-ARG UBUNTU_VERSION="24.04"
 FROM nvidia/cuda:${CUDA_VERSION}-cudnn-devel-ubuntu${UBUNTU_VERSION} AS ffmpeg-builder
 ENV TZ=Asia/Seoul
 ENV DEBIAN_FRONTEND=noninteractive
@@ -83,7 +83,6 @@ RUN git clone https://git.ffmpeg.org/ffmpeg.git /usr/src/ffmpeg && \
 
 #--------------------------------
 # 3. Final image
-ARG DEBIAN_VERSION="bookworm"
 FROM debian:${DEBIAN_VERSION}
 ENV TZ=Asia/Seoul
 ENV DEBIAN_FRONTEND=noninteractive
