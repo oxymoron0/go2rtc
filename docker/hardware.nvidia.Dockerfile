@@ -50,6 +50,11 @@ RUN apt-get update && apt install -y \
     libtool-bin \
     pkg-config
 
+# Install NV-Codec-Headers
+RUN git clone https://github.com/FFmpeg/nv-codec-headers.git /usr/src/nv-codec-headers && \
+    cd /usr/src/nv-codec-headers && \
+    make install
+
 
 #--------------------------------
 # 3. Final image
