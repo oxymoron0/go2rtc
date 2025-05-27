@@ -31,6 +31,24 @@ ARG CUDA_VERSION="12.9.0"
 ARG UBUNTU_VERSION="24.04"
 FROM nvidia/cuda:${CUDA_VERSION}-cudnn-devel-ubuntu${UBUNTU_VERSION} AS ffmpeg-builder
 
+RUN apt-get update && apt install -y \
+    build-essential \
+    yasm \
+    cmake \
+    libass-dev \
+    libfreetype-dev \
+    libfontconfig-dev \
+    libx264-dev \
+    libx265-dev \
+    libnuma-dev \
+    libvpx-dev \
+    libfdk-aac-dev \
+    libmp3lame-dev \
+    libopus-dev \
+    libvorbis-dev \
+    libxvidcore-dev \
+    libtool-bin \
+    pkg-config
 
 
 #--------------------------------
