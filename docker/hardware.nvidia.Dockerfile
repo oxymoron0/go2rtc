@@ -101,6 +101,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked --mount=type=cache,t
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /build/go2rtc /usr/local/bin/
+COPY --from=ffmpeg-builder /usr/local/ffmpeg_cuda /usr/local/ffmpeg_cuda
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 VOLUME /config
@@ -108,5 +109,7 @@ WORKDIR /config
 # https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(Native-GPU-Support)
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,video,utility
+ENV PATH="/usr/local/ffmpeg_cuda/bin:$PATH"
+ENV LD_LIBRARY_PATH="/usr/local/ffmpeg_cuda/lib:$LD_LIBRARY_PATH"
 
 CMD ["go2rtc", "-config", "/config/go2rtc.yaml"]
