@@ -1,3 +1,6 @@
+# Building 504.1s (29/29) FINISHED
+# Intel(R) Xeon(R) W-2225 CPU @ 4.10GHz * 8
+
 # syntax=docker/dockerfile:labs
 
 # 0. Prepare images
