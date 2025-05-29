@@ -1,4 +1,5 @@
 # docker compose -f ./docker/docker-compose.yaml --project-directory . up -d
+# docker compose -f ./docker/docker-compose.yaml --project-directory . restart
 version: '3.8'
 services:
   go2rtc:
