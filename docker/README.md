@@ -24,6 +24,16 @@ docker build --no-cache -t alexxit/go2rtc:nvidia-ffmpeg -f ./docker/hardware.nvi
 
 ## Docker compose
 
+start compose
+```bash
+docker compose -f ./docker/docker-compose.yaml --project-directory . up -d
+```
+
+restart compose
+```
+docker compose -f ./docker/docker-compose.yaml --project-directory . restart
+```
+
 ```yaml
 services:
   go2rtc:
